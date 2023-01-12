@@ -4,71 +4,38 @@ export default class NetworkHandler {
     constructor(scene) {
 
         scene.client = new Colyseus.Client('ws://localhost:2567');
+        this.room;
 
         scene.client.joinOrCreate("game").then(room => {
             console.log("JOIN SUCCESSFUL");
-            room.onMessage("server-message", (message) => {
+
+            this.room = room;
+
+            scene.DeckHandler.dealCard(1000, 860, "cardBack", "playerCard");
+            scene.DeckHandler.dealCard(1000, 135, "cardBack", "opponentCard");
+
+            this.room.onMessage("server-message", (message) => {
                 console.log("Server message: " + message)
             });
 
-            room.onMessage("game-message", (message) => {
+            this.room.onMessage("game-message", (message) => {
                 console.log("Game message: " + message)
                 if (message === "draw") {
                     console.log("draw");
+                    scene.GameHandler.draw("opponentCards");
                 }
                 else if (message === "drop") {
                     console.log("drop");
+                    scene.GameHandler.drop();
                 }
             });
         }).catch(e => {
             console.log("JOIN ERROR", e);
         });
 
-        /*scene.socket = io('https://phaser-tabletop-card-game-2021.herokuapp.com');
-
-        scene.socket.on('connect', () => {
-            console.log('Connected!');
-            scene.socket.emit('dealDeck', scene.socket.id);
-        });
-
-        scene.socket.on('firstTurn', () => {
-            scene.GameHandler.changeTurn();
-        })
-
-        scene.socket.on('changeGameState', (gameState) => {
-            scene.GameHandler.changeGameState(gameState);
-            if (gameState === "Initializing") {
-                scene.DeckHandler.dealCard(1000, 860, "cardBack", "playerCard");
-                scene.DeckHandler.dealCard(1000, 135, "cardBack", "opponentCard");
-                scene.dealCards.setInteractive();
-                scene.dealCards.setColor('#00ffff');
-            }
-        });
-
-        scene.socket.on('changeTurn', () => {
-            scene.GameHandler.changeTurn();
-        })
-
-
-        scene.socket.on('dealCards', (socketId, cards) => {
-            if (socketId === scene.socket.id) {
-                for (let i in cards) {
-                    let card = scene.GameHandler.playerHand.push(scene.DeckHandler.dealCard(155 + (i * 155), 860, cards[i], "playerCard"));
-                }
-            } else {
-                for (let i in cards) {
-                    let card = scene.GameHandler.opponentHand.push(scene.DeckHandler.dealCard(155 + (i * 155), 135, "cardBack", "opponentCard"));
-                }
-            }
-        })
-
-        scene.socket.on('cardPlayed', (cardName, socketId) => {
-            if (socketId !== scene.socket.id) {
-                scene.GameHandler.opponentHand.shift().destroy();
-                scene.DeckHandler.dealCard((scene.dropZone.x - 350) + (scene.dropZone.data.values.cards * 50), scene.dropZone.y, cardName, "opponentCard");
-                scene.dropZone.data.values.cards++;
-            }
-        })*/
+        this.sendMessage = (message) => {
+            this.room.send("game-message", message)
+        };
 
     }
 }

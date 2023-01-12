@@ -4,10 +4,9 @@
     "\\client",
     "\\client\\src",
     "\\client\\src\\helpers",
-    "\\client\\src\\scenes",
-    "\\server\\src",
-    "\\server\\src\\rooms"
+    "\\client\\src\\helpers\\cards",
+    "\\client\\src\\scenes"
   ],
-  "SelectedNode": "\\client\\src\\helpers\\InteractiveHandler.js",
+  "SelectedNode": "\\client\\src\\helpers\\GameHandler.js",
   "PreviewInSolutionExplorer": false
 }

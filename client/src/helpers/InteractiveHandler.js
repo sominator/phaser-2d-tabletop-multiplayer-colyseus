@@ -4,8 +4,8 @@ export default class InteractiveHandler {
         scene.cardPreview = null;
 
         scene.dealCards.on('pointerdown', () => {
-            scene.socket.emit("dealCards", scene.socket.id);
-            scene.dealCards.disableInteractive();
+            scene.GameHandler.draw("playerCards");
+            scene.NetworkHandler.sendMessage("draw");
         })
 
         scene.dealCards.on('pointerover', () => {
@@ -15,7 +15,6 @@ export default class InteractiveHandler {
         scene.dealCards.on('pointerout', () => {
             scene.dealCards.setColor('#00ffff')
         })
-
 
         scene.input.on('pointerover', (event, gameObjects) => {
             let pointer = scene.input.activePointer;
@@ -50,17 +49,11 @@ export default class InteractiveHandler {
         })
 
         scene.input.on('drop', (pointer, gameObject, dropZone) => {
-            if (scene.GameHandler.isMyTurn && scene.GameHandler.gameState === "Ready") {
-                gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 50);
-                gameObject.y = dropZone.y;
-                scene.dropZone.data.values.cards++;
-                scene.input.setDraggable(gameObject, false);
-                scene.socket.emit('cardPlayed', gameObject.data.values.name, scene.socket.id);
-            }
-            else {
-                gameObject.x = gameObject.input.dragStartX;
-                gameObject.y = gameObject.input.dragStartY;
-            }
+            gameObject.x = (dropZone.x - 350) + (dropZone.data.values.cards * 50);
+            gameObject.y = dropZone.y;
+            scene.dropZone.data.values.cards++;
+            scene.input.setDraggable(gameObject, false);
+            scene.NetworkHandler.sendMessage("drop");
         })
 
     }

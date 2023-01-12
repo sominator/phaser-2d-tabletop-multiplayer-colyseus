@@ -26,7 +26,7 @@ export default class UIHandler {
         }
 
         this.buildGameText = () => {
-            scene.dealCards = scene.add.text(960, 445, "Deal Cards").setFontSize(14).setFontFamily('Trebuchet MS');
+            scene.dealCards = scene.add.text(960, 445, "Deal Cards").setFontSize(14).setFontFamily('Trebuchet MS').setColor('#00ffff').setInteractive();
         }
 
         this.buildUI = () => {
